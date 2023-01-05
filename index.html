@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Zip Code to Latitude and Longitude</title>
+
+    <script>
+
+      // SHEET ID
+      // You can get this from the url when the Google sheet is opened
+      const SHEET_ID = "1XesNaSc2nUkpFSP1fsRbM761y6-IYyzsZB6Ct4nDQSo";
+
+      // API KEY
+      // You can get this here: https://console.cloud.google.com/apis/credentials
+      const API_KEY = "AIzaSyBF79Gfb7GGTv6fNCxiRBY6TFkAu2Zh1Bg";
+
+      // ADDITIONAL REQUIRED STEPS
+      // Create a service account here: https://console.cloud.google.com/apis/credentials
+      // Add the email of the service account to your Google sheet as an editor
+      // Make your Google sheet viewable by anyone with the link
+
+      document.addEventListener("keyup", function(event) {
+          if (event.keyCode === 13) {
+              getLatLng();
+          }
+      });
+
+      function status( message ){
+        document.getElementById('data').innerHTML = message;
+      }
+
+      function getLatLng(){
+        status("fetching data");
+
+        var zip = document.getElementById('zipcode').value;
+        isValidZip = /(^\d{5}$)|(^\d{5}-\d{4}$)/.test(zip);
+
+        if(isValidZip){
+          var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+          };
+        
+        // Google sheet rows dont have leading zeros, so we remove them before the request
+        while(zip[0] == "0"){
+          zip = zip.substring(1);
+        }        
+
+        fetch("https://content-sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + "/values/Zip%20Codes!A" + zip + "%3AB" + zip + "?key=" + API_KEY, requestOptions)
+        .then(response => response.text())
+        .then(result => status("Lat: " + JSON.parse(result).values[0][0] + "<br>Lng: " + JSON.parse(result).values[0][1]))
+        .catch(error => status("Request failed"));
+          } else {
+            status("Invalid Zip");
+          }
+        }
+    </script>
+
+  </head>
+  <body>
+    <h1>Zip Code to Latitude and Longitude</h1>
+      <input id="zipcode" type="text" placeholder="Zip Code">
+      <button onclick="getLatLng()">Get Data</button>
+      <div id="data"></div>
+  </body>
+</html>
