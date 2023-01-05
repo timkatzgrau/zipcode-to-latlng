@@ -55,7 +55,7 @@ We just need to make sure that the leading zeros are stripped for some zipcodes 
 
         fetch("https://content-sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + "/values/Zip%20Codes!A" + zip + "%3AB" + zip + "?key=" + API_KEY, requestOptions)
         .then(response => response.text())
-        .then(result => console.log("Lat: " + JSON.parse(result).values[0][0] + "<br>Lng: " + JSON.parse(result).values[0][1]))
+        .then(result => console.log("Lat: " + JSON.parse(result).values[0][0] + ", Lng: " + JSON.parse(result).values[0][1]))
         .catch(error => console.log("Request failed"));
     } else {
         console.log("Invalid Zip");
